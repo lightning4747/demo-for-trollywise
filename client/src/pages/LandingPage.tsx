@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { TrolleyViewer } from '../components/TrolleyViewer';
+import Cart3D from '../components/Cart3D';
 import { TextType } from '../components/react-bits/TextType';
 import { BorderGlow } from '../components/react-bits/BorderGlow';
 import { FadeContent } from '../components/react-bits/FadeContent';
-import { ArrowRight, Cpu, Eye, Activity, CheckCircle2, Shield } from 'lucide-react';
+import { ArrowRight, Cpu, Eye, Activity, CheckCircle2, Shield, Maximize2, X } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   const { user } = useAuth();
+  const [isFullScreenWhite, setIsFullScreenWhite] = useState(false);
 
   const scrollToFeatures = () => {
     const el = document.getElementById('features');
@@ -20,13 +21,49 @@ export const LandingPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[oklch(0.2077_0.0398_265.7549)] text-slate-100 selection:bg-emerald-400/20 selection:text-emerald-400 overflow-x-hidden">
       
+      {/* ================= FULLSCREEN WHITE CANVAS MODAL ================= */}
+      {isFullScreenWhite && (
+        <div className="fixed inset-0 z-[100] bg-white text-slate-900 flex flex-col animate-fade-in-up">
+          {/* Header Controls Bar */}
+          <div className="h-16 px-8 border-b border-slate-200 flex items-center justify-between bg-slate-50/80 backdrop-blur">
+            <div className="flex items-center gap-3">
+              <img
+                src="/assets/logo.jpeg"
+                alt="TrollyWise Logo"
+                className="w-7 h-7 rounded object-cover border border-slate-300"
+              />
+              <span className="font-bold text-sm tracking-tight uppercase italic text-slate-900">
+                Trolly<span className="text-emerald-600">Wise</span> Studio View
+              </span>
+            </div>
+
+            <button
+              onClick={() => setIsFullScreenWhite(false)}
+              className="px-4 py-2 rounded-xl bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors flex items-center gap-2"
+            >
+              <X className="w-4 h-4" /> Close Studio View
+            </button>
+          </div>
+
+          {/* Full-Screen White 3D Viewport */}
+          <div className="flex-1 w-full h-full relative bg-white">
+            <Cart3D
+              colorway="light"
+              renderMode="pbr"
+              enableFloat={true}
+              enableControls={true}
+            />
+          </div>
+        </div>
+      )}
+
       {/* ================= HERO SECTION ================= */}
-      <section className="relative pt-16 lg:pt-24 pb-16 overflow-hidden">
-        <div className="max-w-5xl mx-auto px-6 text-center space-y-8">
+      <section className="relative pt-12 lg:pt-16 pb-16 overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 text-center space-y-6">
           
           {/* Typed Hero Headline using TextType */}
           <FadeContent duration={0.6}>
-            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-100 leading-[1.1] max-w-4xl mx-auto min-h-[2.4em] flex items-center justify-center">
+            <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-100 leading-[1.1] max-w-4xl mx-auto flex items-center justify-center">
               <TextType
                 text="The cart that knows your store."
                 typingSpeed={60}
@@ -35,41 +72,39 @@ export const LandingPage: React.FC = () => {
             </h1>
           </FadeContent>
 
-          {/* Subhead */}
-          <FadeContent delay={0.15}>
-            <p className="text-base sm:text-lg font-sans text-slate-400 leading-relaxed max-w-2xl mx-auto">
-              Real-time item recognition, live running totals, and automated shopper telemetry — in every aisle.
-            </p>
-          </FadeContent>
-
-          {/* Centered CTA Buttons */}
-          <FadeContent delay={0.25}>
+          {/* Hero Action Controls: Explore & Fullscreen White Studio View */}
+          <FadeContent delay={0.2}>
             <div className="pt-2 flex flex-wrap gap-4 items-center justify-center">
               <button
                 onClick={scrollToFeatures}
-                className="px-8 py-4 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors flex items-center gap-2 cursor-pointer shadow-md"
+                className="px-8 py-3.5 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors flex items-center gap-2 cursor-pointer shadow-md"
               >
                 Explore Technology <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </button>
 
-              <Link
-                to={user ? '/book' : '/login'}
-                className="px-6 py-4 rounded-xl bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-600 transition-colors font-medium text-sm"
+              <button
+                onClick={() => setIsFullScreenWhite(true)}
+                className="px-6 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700 text-slate-200 hover:text-white hover:border-emerald-400 transition-colors text-sm font-medium flex items-center gap-2.5"
               >
-                Client Portal
-              </Link>
+                <Maximize2 className="w-4 h-4 text-emerald-400" /> View Fullscreen (White Canvas)
+              </button>
             </div>
           </FadeContent>
 
-          {/* Centered 3D Model Viewer */}
-          <FadeContent delay={0.35}>
-            <div className="pt-6">
-              <TrolleyViewer />
+          {/* Centered Large 3D CAD Cart Model */}
+          <FadeContent delay={0.3}>
+            <div className="w-full max-w-5xl h-[520px] sm:h-[650px] lg:h-[720px] mx-auto pt-2 relative">
+              <Cart3D
+                colorway="dark"
+                renderMode="pbr"
+                enableFloat={true}
+                enableControls={true}
+              />
             </div>
           </FadeContent>
 
           {/* Micro Telemetry Strip */}
-          <FadeContent delay={0.45}>
+          <FadeContent delay={0.4}>
             <div className="pt-8 grid grid-cols-3 gap-6 border-t border-slate-800/80 max-w-xl mx-auto text-center font-mono">
               <div className="space-y-1">
                 <div className="text-xl sm:text-2xl font-bold text-emerald-400">0.2s</div>
