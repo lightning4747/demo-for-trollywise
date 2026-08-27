@@ -163,7 +163,7 @@ export function RealStepCartModel({
     };
   }, [isDragging, scrollProgress]);
 
-  // Clean Neutral Silver / Graphite / Slate Materials (Zero Green Wash)
+  // Authentic Metallic & Slate Titanium Materials (Brilliant in both Dark and Light Studio Views)
   const mat = useMemo(() => {
     const wire = isWireframe;
     const xT = isXray;
@@ -172,13 +172,13 @@ export function RealStepCartModel({
       new THREE.MeshStandardMaterial({ color, metalness: m, roughness: r, wireframe: wire, transparent: xT, opacity: xOp, ...extra });
 
     return {
-      basket: mk(isDark ? '#cbd5e1' : '#64748b', 0.8, 0.35),     // Metallic silver/aluminum basket
-      panel: mk(isDark ? '#1e293b' : '#334155', 0.25, 0.3),       // Slate gray display panel
-      caster_wheel: mk(isDark ? '#e2e8f0' : '#94a3b8', 0.9, 0.2), // Chrome wheel rim
+      basket: mk('#cbd5e1', 0.6, 0.35),                           // Authentic silver/slate steel basket
+      panel: mk('#1e293b', 0.2, 0.2),                             // Dark slate screen bezel
+      caster_wheel: mk('#e2e8f0', 0.7, 0.2),                      // Chrome wheel rim
       caster_tire: mk('#1a1a1c', 0.0, 0.9),                       // Dark rubber tire
-      caster_body: mk(isDark ? '#94a3b8' : '#475569', 0.85, 0.3),  // Steel caster frame
-      handle: mk(isDark ? '#334155' : '#1e293b', 0.15, 0.6),      // Dark slate handle grip
-      detail: mk(isDark ? '#64748b' : '#475569', 0.8, 0.3),       // Titanium metal details
+      caster_body: mk('#94a3b8', 0.6, 0.3),                       // Steel caster frame
+      handle: mk('#334155', 0.15, 0.6),                           // Dark handle grip
+      detail: mk('#64748b', 0.6, 0.3),                            // Titanium metal details
       highlight: new THREE.MeshStandardMaterial({
         color: '#38bdf8',
         emissive: '#0284c7',
@@ -187,7 +187,7 @@ export function RealStepCartModel({
         roughness: 0.2,
         wireframe: wire,
       }),
-      dim_line: new THREE.MeshBasicMaterial({ color: isDark ? '#94a3b8' : '#475569' }),
+      dim_line: new THREE.MeshBasicMaterial({ color: '#94a3b8' }),
     };
   }, [isDark, isWireframe, isXray]);
 
@@ -287,11 +287,11 @@ export default function Cart3D({
         {enableScrollRig && <CameraRig scrollProgress={scrollProgress} />}
         {enableControls && <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} makeDefault />}
 
-        {/* Crisp Neutral Studio Lighting (Pure White & Cool Sky Light) */}
-        <ambientLight intensity={colorway === 'dark' ? 1.35 : 1.1} color="#ffffff" />
-        <directionalLight position={[4, 6, 4]} intensity={colorway === 'dark' ? 2.0 : 1.6} color="#ffffff" castShadow shadow-mapSize={[1024, 1024]} />
-        <directionalLight position={[-4, 3, -3]} intensity={0.7} color="#e0f2fe" />
-        <pointLight position={[0, -1.5, 1]} intensity={0.4} color="#ffffff" />
+        {/* Crisp Neutral Studio Lighting (Pure White Studio) */}
+        <ambientLight intensity={colorway === 'dark' ? 1.35 : 1.8} color="#ffffff" />
+        <directionalLight position={[4, 6, 4]} intensity={colorway === 'dark' ? 2.0 : 2.2} color="#ffffff" castShadow shadow-mapSize={[1024, 1024]} />
+        <directionalLight position={[-4, 3, -3]} intensity={colorway === 'dark' ? 0.7 : 1.0} color="#f1f5f9" />
+        <pointLight position={[0, -1.5, 1]} intensity={0.5} color="#ffffff" />
 
         {enableFloat ? (
           <Float speed={1.3} rotationIntensity={0.07} floatIntensity={0.12}>
@@ -319,7 +319,7 @@ export default function Cart3D({
 
         <ContactShadows
           position={[0, -1.08, 0]}
-          opacity={colorway === 'dark' ? 0.35 : 0.22}
+          opacity={colorway === 'dark' ? 0.35 : 0.25}
           scale={6}
           blur={2.5}
           far={3.5}

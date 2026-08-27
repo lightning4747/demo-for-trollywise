@@ -61,7 +61,7 @@ export const ConfirmationPage: React.FC = () => {
         <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 text-left space-y-4 text-xs font-sans">
           <div className="flex justify-between items-center pb-3 border-b border-slate-800">
             <span className="font-mono text-slate-400 uppercase tracking-wider">Request Ticket</span>
-            <span className="font-mono font-bold text-emerald-400">TW-{String(request?.id).padStart(4, '0')}</span>
+            <span className="font-mono font-bold text-emerald-400">TrollyWise-{String(request?.id).padStart(4, '0')}</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

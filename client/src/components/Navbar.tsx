@@ -15,7 +15,7 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="w-full bg-[oklch(0.2077_0.0398_265.7549)] border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md">
+    <nav className="w-full bg-[oklch(0.2077_0.0398_265.7549)] border-b border-slate-800/80 sticky top-0 z-[100] backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 h-20 grid grid-cols-12 items-center">
         
         {/* Left: Brand Logo (3 cols) */}

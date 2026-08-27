@@ -138,7 +138,7 @@ export const DashboardPage: React.FC = () => {
                         <tr key={req.id} className="hover:bg-slate-900/40 transition-colors">
                           {/* ID */}
                           <td className="py-4 px-6 font-mono text-slate-300 font-medium">
-                            TW-{String(req.id).padStart(4, '0')}
+                            TrollyWise-{String(req.id).padStart(4, '0')}
                           </td>
 
                           {/* Business */}

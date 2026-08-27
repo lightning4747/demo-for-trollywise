@@ -1,26 +1,62 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import Cart3D from '../components/Cart3D';
 import { TextType } from '../components/react-bits/TextType';
 import { BorderGlow } from '../components/react-bits/BorderGlow';
 import { FadeContent } from '../components/react-bits/FadeContent';
-import { ArrowRight, Cpu, Eye, Activity, CheckCircle2, Shield, Maximize2, X } from 'lucide-react';
+import GradualBlur from '../components/react-bits/GradualBlur';
+import { ArrowRight, Cpu, Eye, Activity, CheckCircle2, Shield, Maximize2, X, ChevronDown } from 'lucide-react';
 
 export const LandingPage: React.FC = () => {
   const { user } = useAuth();
   const [isFullScreenWhite, setIsFullScreenWhite] = useState(false);
 
-  const scrollToFeatures = () => {
-    const el = document.getElementById('features');
+  const cartRevealRef = useRef<HTMLDivElement>(null);
+
+  // Pure fade-in for revealed main cart
+  const { scrollYProgress: cartScrollProgress } = useScroll({
+    target: cartRevealRef,
+    offset: ['start end', 'center center'],
+  });
+  const cartOpacity = useTransform(cartScrollProgress, [0, 0.65], [0, 1]);
+
+  const scrollToCartShowcase = () => {
+    const el = document.getElementById('cart-showcase');
     if (el) {
       el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
   return (
-    <div className="min-h-screen bg-[oklch(0.2077_0.0398_265.7549)] text-slate-100 selection:bg-emerald-400/20 selection:text-emerald-400 overflow-x-hidden">
+    <div className="min-h-screen bg-[oklch(0.2077_0.0398_265.7549)] text-slate-100 selection:bg-emerald-400/20 selection:text-emerald-400 overflow-x-hidden relative">
       
+      {/* ================= PAGE-LEVEL GRADUAL GAUSSIAN BLUR OVERLAYS (WHOLE SITE) ================= */}
+      <GradualBlur
+        target="page"
+        position="top"
+        height="6rem"
+        strength={1.5}
+        divCount={5}
+        curve="bezier"
+        exponential
+        opacity={1}
+        zIndex={40}
+      />
+
+      <GradualBlur
+        target="page"
+        position="bottom"
+        height="6rem"
+        strength={1.5}
+        divCount={5}
+        curve="bezier"
+        exponential
+        opacity={1}
+        zIndex={40}
+      />
+
       {/* ================= FULLSCREEN WHITE CANVAS MODAL ================= */}
       {isFullScreenWhite && (
         <div className="fixed inset-0 z-[100] bg-white text-slate-900 flex flex-col animate-fade-in-up">
@@ -39,7 +75,7 @@ export const LandingPage: React.FC = () => {
 
             <button
               onClick={() => setIsFullScreenWhite(false)}
-              className="px-4 py-2 rounded-xl bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors flex items-center gap-2"
+              className="px-4 py-2 rounded-xl bg-slate-900 text-white font-medium text-xs hover:bg-slate-800 transition-colors flex items-center gap-2 cursor-pointer"
             >
               <X className="w-4 h-4" /> Close Studio View
             </button>
@@ -57,10 +93,10 @@ export const LandingPage: React.FC = () => {
         </div>
       )}
 
-      {/* ================= HERO SECTION ================= */}
-      <section className="relative pt-12 lg:pt-16 pb-16 overflow-hidden">
-        <div className="max-w-6xl mx-auto px-6 text-center space-y-6">
-          
+      {/* ================= HERO SECTION (CLEAN TEXT & CTA) ================= */}
+      <section className="relative min-h-[85vh] flex flex-col justify-center items-center px-6 text-center">
+        {/* Foreground Content: Clean Headline & CTA */}
+        <div className="relative z-10 max-w-5xl mx-auto space-y-8 my-auto">
           {/* Typed Hero Headline using TextType */}
           <FadeContent duration={0.6}>
             <h1 className="font-serif text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-slate-100 leading-[1.1] max-w-4xl mx-auto flex items-center justify-center">
@@ -72,40 +108,77 @@ export const LandingPage: React.FC = () => {
             </h1>
           </FadeContent>
 
-          {/* Hero Action Controls: Explore & Fullscreen White Studio View */}
+          {/* Hero Action CTA: Explore Technology */}
           <FadeContent delay={0.2}>
-            <div className="pt-2 flex flex-wrap gap-4 items-center justify-center">
+            <div className="pt-2 flex justify-center">
               <button
-                onClick={scrollToFeatures}
-                className="px-8 py-3.5 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors flex items-center gap-2 cursor-pointer shadow-md"
+                onClick={scrollToCartShowcase}
+                className="px-9 py-4 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors flex items-center gap-2 cursor-pointer shadow-lg hover:shadow-emerald-400/20"
               >
                 Explore Technology <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </button>
+            </div>
+          </FadeContent>
+        </div>
 
-              <button
-                onClick={() => setIsFullScreenWhite(true)}
-                className="px-6 py-3.5 rounded-xl bg-slate-900/90 border border-slate-700 text-slate-200 hover:text-white hover:border-emerald-400 transition-colors text-sm font-medium flex items-center gap-2.5"
-              >
-                <Maximize2 className="w-4 h-4 text-emerald-400" /> View Fullscreen (White Canvas)
-              </button>
+        {/* Subtle Scroll Indicator */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-1.5 text-slate-500 font-mono text-[11px] pointer-events-none">
+          <span className="uppercase tracking-widest text-slate-400 text-[10px]">Scroll to inspect</span>
+          <motion.div
+            animate={{ y: [0, 5, 0] }}
+            transition={{ repeat: Infinity, duration: 1.8, ease: 'easeInOut' }}
+          >
+            <ChevronDown className="w-4 h-4 text-emerald-400" />
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ================= MAIN REVEAL SECTION ================= */}
+      <section
+        id="cart-showcase"
+        ref={cartRevealRef}
+        className="relative py-20 lg:py-28 overflow-hidden border-t border-slate-800/60"
+      >
+        <div className="max-w-6xl mx-auto px-6 space-y-8 text-center">
+          
+          <FadeContent>
+            <div className="space-y-2">
+              <div className="text-xs font-mono text-emerald-400 uppercase tracking-widest">
+                HARDWARE INSPECTION
+              </div>
+              <h2 className="font-serif text-3xl sm:text-4xl font-bold text-slate-100">
+                Interactive 3D Hardware Overview
+              </h2>
             </div>
           </FadeContent>
 
-          {/* Centered Large 3D CAD Cart Model */}
-          <FadeContent delay={0.3}>
-            <div className="w-full max-w-5xl h-[520px] sm:h-[650px] lg:h-[720px] mx-auto pt-2 relative">
-              <Cart3D
-                colorway="dark"
-                renderMode="pbr"
-                enableFloat={true}
-                enableControls={true}
-              />
-            </div>
-          </FadeContent>
+          {/* Fully Revealed 3D CAD Cart Container */}
+          <motion.div
+            style={{ opacity: cartOpacity }}
+            className="w-full max-w-5xl h-[520px] sm:h-[650px] lg:h-[720px] mx-auto relative rounded-3xl border border-slate-800/80 bg-slate-950/30 overflow-hidden shadow-2xl backdrop-blur-sm"
+          >
+            <Cart3D
+              colorway="dark"
+              renderMode="pbr"
+              enableFloat={true}
+              enableControls={true}
+            />
+          </motion.div>
+
+          {/* Action Button: Directly UNDER the cart's container */}
+          <div className="pt-2 flex justify-center">
+            <button
+              onClick={() => setIsFullScreenWhite(true)}
+              className="px-7 py-3.5 rounded-xl bg-slate-900 border border-slate-700 hover:border-emerald-400 text-slate-200 hover:text-white transition-all text-sm font-medium flex items-center gap-2.5 shadow-lg group cursor-pointer"
+            >
+              <Maximize2 className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform" />
+              View Fullscreen (White Canvas)
+            </button>
+          </div>
 
           {/* Micro Telemetry Strip */}
-          <FadeContent delay={0.4}>
-            <div className="pt-8 grid grid-cols-3 gap-6 border-t border-slate-800/80 max-w-xl mx-auto text-center font-mono">
+          <FadeContent delay={0.2}>
+            <div className="pt-10 grid grid-cols-3 gap-6 border-t border-slate-800/80 max-w-xl mx-auto text-center font-mono">
               <div className="space-y-1">
                 <div className="text-xl sm:text-2xl font-bold text-emerald-400">0.2s</div>
                 <div className="text-[10px] text-slate-500 uppercase tracking-widest">Scan Latency</div>
