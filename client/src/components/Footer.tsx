@@ -5,9 +5,11 @@ export const Footer: React.FC = () => {
     <footer className="w-full border-t border-slate-800/60 bg-[oklch(0.2077_0.0398_265.7549)] py-10 text-slate-500 text-xs">
       <div className="max-w-7xl mx-auto px-6 flex flex-col sm:flex-row justify-between items-center gap-6">
         <div className="flex items-center gap-3">
-          <div className="w-5 h-5 rounded bg-slate-900 border border-slate-700 flex items-center justify-center font-bold text-emerald-400 text-xs">
-            T
-          </div>
+          <img
+            src="/assets/logo.jpeg"
+            alt="TrollyWise Logo"
+            className="w-6 h-6 rounded object-cover border border-slate-700 shadow-sm"
+          />
           <span className="text-xs font-bold tracking-widest uppercase text-slate-400 italic">
             TrollyWise <span className="font-mono text-[10px] normal-case text-slate-600">v4.0.2</span>
           </span>

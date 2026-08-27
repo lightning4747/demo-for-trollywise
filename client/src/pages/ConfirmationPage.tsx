@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { CheckCircle2, ArrowRight, Store, Calendar, ShieldCheck, MapPin } from 'lucide-react';
+import { CheckCircle2, ArrowRight, MapPin } from 'lucide-react';
 
 export const ConfirmationPage: React.FC = () => {
   const { requestId } = useParams<{ requestId: string }>();
@@ -38,13 +38,10 @@ export const ConfirmationPage: React.FC = () => {
 
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-[oklch(0.2077_0.0398_265.7549)] py-16 px-4 relative overflow-hidden flex items-center justify-center">
-      {/* Signature Trolly Glow at peak intensity */}
-      <div className="trolly-glow w-[600px] h-[600px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-90"></div>
-
-      <div className="w-full max-w-xl bg-[oklch(0.2795_0.0368_260.0310)] border border-slate-700/80 rounded-3xl p-8 sm:p-12 shadow-2xl relative z-10 text-center animate-fade-in-up space-y-8">
+      <div className="w-full max-w-xl bg-[oklch(0.2795_0.0368_260.0310)] border border-slate-700/80 rounded-3xl p-8 sm:p-12 shadow-xl relative z-10 text-center animate-fade-in-up space-y-8">
         {/* Success Icon */}
-        <div className="w-20 h-20 rounded-full bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center mx-auto text-emerald-400 shadow-[0_0_30px_rgba(124,255,212,0.3)]">
-          <CheckCircle2 className="w-10 h-10 stroke-[2]" />
+        <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-400/30 flex items-center justify-center mx-auto text-emerald-400">
+          <CheckCircle2 className="w-8 h-8 stroke-[2]" />
         </div>
 
         {/* Header */}
@@ -97,7 +94,7 @@ export const ConfirmationPage: React.FC = () => {
         <div className="pt-2">
           <Link
             to="/dashboard"
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-all shadow-[0_0_20px_rgba(124,255,212,0.2)]"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors"
           >
             Return to Dashboard <ArrowRight className="w-4 h-4" />
           </Link>

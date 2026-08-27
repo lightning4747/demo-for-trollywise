@@ -6,11 +6,27 @@ import * as THREE from 'three';
 function Model() {
   const { scene } = useGLTF('/assets/shopping_cart.glb');
 
-  // Automatically compute bounding box to center and scale the model perfectly
+  // Single merged PBR material per specification
+  const material = useMemo(() => {
+    return new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#c9cdd1'),
+      metalness: 0.4,
+      roughness: 0.45,
+    });
+  }, []);
+
+  // Process scene hierarchy, apply single material via scene.traverse, and normalize bounding box
   const { clonedScene, targetScale, centerOffset } = useMemo(() => {
     const clone = scene.clone(true);
     
-    // Compute exact bounding box
+    clone.traverse((child) => {
+      if ((child as THREE.Mesh).isMesh) {
+        const mesh = child as THREE.Mesh;
+        mesh.material = material;
+      }
+    });
+
+    // Compute exact bounding box for zero-clipping normalization
     const box = new THREE.Box3().setFromObject(clone);
     const size = new THREE.Vector3();
     box.getSize(size);
@@ -27,7 +43,7 @@ function Model() {
       targetScale: scaleFactor,
       centerOffset: [-center.x, -center.y, -center.z] as [number, number, number],
     };
-  }, [scene]);
+  }, [scene, material]);
 
   return (
     <group scale={targetScale}>
@@ -43,7 +59,7 @@ function Fallback() {
   return (
     <mesh>
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#7cffd4" wireframe />
+      <meshStandardMaterial color="#4ade80" wireframe />
     </mesh>
   );
 }
@@ -51,28 +67,31 @@ function Fallback() {
 export const TrolleyViewer: React.FC = () => {
   return (
     <div className="w-full max-w-xl h-[360px] sm:h-[420px] relative mx-auto flex items-center justify-center touch-pan-y">
-      {/* Signature Ambient Trolly Glow Spotlight */}
-      <div className="trolly-glow w-[280px] h-[280px] sm:w-[360px] sm:h-[360px] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-70 pointer-events-none"></div>
-
       <Canvas
-        camera={{ position: [0, 1.0, 4.2], fov: 55 }}
+        camera={{ position: [0, 0.6, 4.0], fov: 45 }}
         style={{ background: 'transparent', touchAction: 'pan-y' }}
         gl={{ antialias: true, alpha: true }}
       >
-        {/* Crisp High-Contrast Lighting */}
-        <ambientLight intensity={1.5} />
-        <directionalLight position={[5, 10, 5]} intensity={2.2} color="#e0f2fe" />
-        <directionalLight position={[-5, 3, -5]} intensity={3.5} color="#7cffd4" />
-        <pointLight position={[0, -1, 3]} intensity={2.0} color="#7cffd4" />
+        {/* Ambient Light */}
+        <ambientLight intensity={1.2} />
+        
+        {/* Soft Cool-White Key Light from front-upper side */}
+        <directionalLight position={[5, 8, 5]} intensity={2.0} color="#e0f2fe" />
+        
+        {/* Dim Mint-Green (#4ade80) Rim Light from behind */}
+        <directionalLight position={[-5, 4, -6]} intensity={3.5} color="#4ade80" />
+        <pointLight position={[0, -1, -3]} intensity={2.0} color="#4ade80" />
 
         <Suspense fallback={<Fallback />}>
           <Model />
         </Suspense>
 
+        {/* OrbitControls with slow auto-rotate on idle and drag-to-rotate (no zoom, no pan) */}
         <OrbitControls
           enableZoom={false}
           enablePan={false}
-          autoRotate={false}
+          autoRotate={true}
+          autoRotateSpeed={1.0}
           rotateSpeed={0.3}
         />
       </Canvas>

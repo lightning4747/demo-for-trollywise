@@ -15,44 +15,44 @@ export const Navbar: React.FC = () => {
   };
 
   return (
-    <nav className="w-full bg-[oklch(0.2077_0.0398_265.7549)] border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md bg-opacity-90">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded bg-slate-900 border border-emerald-500/30 flex items-center justify-center relative overflow-hidden group-hover:border-emerald-400 transition-colors">
-            <div className="absolute inset-0 bg-emerald-500/10 rounded"></div>
-            <span className="text-emerald-400 font-bold text-lg relative z-10">T</span>
-          </div>
-          <span className="text-xl font-bold tracking-tight text-slate-100 uppercase italic">
-            Trolly<span className="text-emerald-400">Wise</span>
-          </span>
-          {location.pathname !== '/' && (
-            <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 uppercase tracking-widest hidden sm:inline-block">
-              CLIENT PORTAL
+    <nav className="w-full bg-[oklch(0.2077_0.0398_265.7549)] border-b border-slate-800/80 sticky top-0 z-50 backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-6 h-20 grid grid-cols-12 items-center">
+        
+        {/* Left: Brand Logo (3 cols) */}
+        <div className="col-span-6 md:col-span-3 flex items-center">
+          <Link to="/" className="flex items-center gap-3 group">
+            <img
+              src="/assets/logo.jpeg"
+              alt="TrollyWise Logo"
+              className="w-9 h-9 rounded-lg object-cover border border-slate-700 group-hover:border-emerald-400 transition-colors"
+            />
+            <span className="text-xl font-bold tracking-tight text-slate-100 uppercase italic">
+              Trolly<span className="text-emerald-400">Wise</span>
             </span>
-          )}
-        </Link>
+          </Link>
+        </div>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center gap-6">
+        {/* Center: Navigation Options (6 cols desktop) - Perfectly Centered */}
+        <div className="hidden md:flex col-span-6 justify-center items-center gap-8 text-sm font-medium">
           <Link
             to="/"
-            className={`text-sm font-medium transition-colors ${
+            className={`transition-colors py-1 ${
               location.pathname === '/'
-                ? 'text-emerald-400'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'text-emerald-400 font-semibold border-b-2 border-emerald-400'
+                : 'text-slate-300 hover:text-slate-100'
             }`}
           >
             Overview
           </Link>
           <a
             href="/#features"
-            className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors"
+            className="text-slate-300 hover:text-slate-100 transition-colors py-1"
           >
             Technology
           </a>
           <a
             href="/#pricing"
-            className="text-sm font-medium text-slate-400 hover:text-slate-200 transition-colors"
+            className="text-slate-300 hover:text-slate-100 transition-colors py-1"
           >
             Demo Program
           </a>
@@ -61,69 +61,70 @@ export const Navbar: React.FC = () => {
             <>
               <Link
                 to="/dashboard"
-                className={`text-sm font-medium transition-colors ${
+                className={`transition-colors py-1 ${
                   location.pathname === '/dashboard'
-                    ? 'text-emerald-400'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-emerald-400 font-semibold border-b-2 border-emerald-400'
+                    : 'text-slate-300 hover:text-slate-100'
                 }`}
               >
                 Dashboard
               </Link>
               <Link
                 to="/book"
-                className={`text-sm font-medium transition-colors ${
+                className={`transition-colors py-1 ${
                   location.pathname === '/book'
-                    ? 'text-emerald-400'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-emerald-400 font-semibold border-b-2 border-emerald-400'
+                    : 'text-slate-300 hover:text-slate-100'
                 }`}
               >
                 Request Demo
               </Link>
-
-              <div className="h-4 w-px bg-slate-800 my-auto"></div>
-
-              <div className="flex items-center gap-3">
-                <div className="text-right">
-                  <div className="text-xs font-semibold text-slate-200">{user.name}</div>
-                  <div className="text-[11px] font-mono text-slate-400">{user.email}</div>
-                </div>
-
-                <button
-                  onClick={handleLogout}
-                  title="Logout"
-                  className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800/60 rounded-lg transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
             </>
           )}
+        </div>
 
-          {!user && (
-            <div className="flex items-center gap-3 ml-2">
+        {/* Right: Auth / User Account (3 cols desktop) */}
+        <div className="col-span-6 md:col-span-3 flex items-center justify-end">
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="text-right hidden sm:block">
+                <div className="text-xs font-semibold text-slate-200">{user.name}</div>
+                <div className="text-[11px] font-mono text-slate-400">{user.email}</div>
+              </div>
+
+              <button
+                onClick={handleLogout}
+                title="Logout"
+                className="p-2 text-slate-400 hover:text-rose-400 hover:bg-slate-800 rounded-lg transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                className="text-sm font-medium text-slate-300 hover:text-emerald-400 transition-colors px-3 py-2"
+                className="text-sm font-medium text-slate-300 hover:text-slate-100 transition-colors px-3 py-2"
               >
                 Log In
               </Link>
               <Link
                 to="/signup"
-                className="px-4 py-2 rounded-lg bg-emerald-400 text-slate-950 text-sm font-semibold hover:bg-emerald-300 transition-all shadow-[0_0_15px_rgba(124,255,212,0.2)]"
+                className="px-4 py-2 rounded-lg bg-emerald-400 text-slate-950 text-sm font-semibold hover:bg-emerald-300 transition-colors"
               >
                 Sign Up
               </Link>
             </div>
           )}
-        </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="md:hidden p-2 text-slate-400 hover:text-slate-100 focus:outline-none"
-        >
-          {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden ml-3 p-2 text-slate-400 hover:text-slate-100 focus:outline-none"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile Drawer */}
@@ -136,6 +137,21 @@ export const Navbar: React.FC = () => {
           >
             Overview
           </Link>
+          <a
+            href="/#features"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-medium text-slate-300 hover:text-emerald-400 py-1.5"
+          >
+            Technology
+          </a>
+          <a
+            href="/#pricing"
+            onClick={() => setMobileMenuOpen(false)}
+            className="block text-sm font-medium text-slate-300 hover:text-emerald-400 py-1.5"
+          >
+            Demo Program
+          </a>
+
           {user ? (
             <>
               <div className="pb-3 border-b border-slate-800/80 pt-2">

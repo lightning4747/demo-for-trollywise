@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Plus, CheckCircle2, Clock, ArrowRight, Store, Calendar, CreditCard, RefreshCw } from 'lucide-react';
+import { Plus, CheckCircle2, Clock, ArrowRight, Store, RefreshCw } from 'lucide-react';
 
 export interface DemoRequest {
   id: number;
@@ -37,20 +37,21 @@ export const DashboardPage: React.FC = () => {
 
   useEffect(() => {
     fetchRequests();
+
+    // Refetch on window focus to ensure instant status update after payment completion
+    const onFocus = () => fetchRequests();
+    window.addEventListener('focus', onFocus);
+    return () => window.removeEventListener('focus', onFocus);
   }, []);
 
   return (
     <div className="min-h-[calc(100vh-5rem)] bg-[oklch(0.2077_0.0398_265.7549)] py-12 px-6 relative overflow-hidden">
-      {/* Background Trolly Glow Spotlight */}
-      <div className="trolly-glow-subtle w-[500px] h-[500px] -top-24 right-0 opacity-40 pointer-events-none"></div>
-
       <div className="max-w-7xl mx-auto space-y-10 relative z-10 animate-fade-in-up">
         {/* Asymmetrical Header Area */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 border-b border-slate-800/80 pb-8">
           <div>
-            <div className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-2 flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              Client Portal Overview
+            <div className="text-xs font-mono text-emerald-400 uppercase tracking-widest mb-2">
+              CLIENT PORTAL OVERVIEW
             </div>
             <h1 className="font-serif text-3xl sm:text-5xl font-bold text-slate-100 leading-tight">
               Your demo requests.
@@ -70,7 +71,7 @@ export const DashboardPage: React.FC = () => {
             </button>
             <Link
               to="/book"
-              className="px-6 py-3.5 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(124,255,212,0.15)]"
+              className="px-6 py-3.5 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors flex items-center gap-2"
             >
               <Plus className="w-4 h-4 stroke-[2.5]" /> Request a Demo
             </Link>
@@ -91,9 +92,8 @@ export const DashboardPage: React.FC = () => {
             <button onClick={fetchRequests} className="underline text-xs">Try again</button>
           </div>
         ) : requests.length === 0 ? (
-          /* Restrained Empty State per NFR-4.2 & Design.md */
+          /* Restrained Empty State */
           <div className="py-20 px-8 rounded-3xl bg-[oklch(0.2795_0.0368_260.0310)] border border-slate-800 text-center max-w-2xl mx-auto space-y-6 relative overflow-hidden">
-            <div className="trolly-glow w-64 h-64 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-30"></div>
             <div className="relative z-10 space-y-4">
               <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mx-auto text-emerald-400">
                 <Store className="w-6 h-6" />
@@ -107,7 +107,7 @@ export const DashboardPage: React.FC = () => {
               <div className="pt-2">
                 <Link
                   to="/book"
-                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-all shadow-[0_0_20px_rgba(124,255,212,0.2)]"
+                  className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-emerald-400 text-slate-950 font-semibold text-sm hover:bg-emerald-300 transition-colors"
                 >
                   Request a Demo Now <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -117,7 +117,7 @@ export const DashboardPage: React.FC = () => {
         ) : (
           /* Request List Cards & Table */
           <div className="space-y-6">
-            <div className="bg-[oklch(0.2795_0.0368_260.0310)] border border-slate-800/90 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="bg-[oklch(0.2795_0.0368_260.0310)] border border-slate-800/90 rounded-2xl overflow-hidden shadow-xl">
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
@@ -165,14 +165,12 @@ export const DashboardPage: React.FC = () => {
                             ₹25,000
                           </td>
 
-                          {/* Status Badge with Signature Glow */}
+                          {/* Status Badge */}
                           <td className="py-4 px-6">
                             {isConfirmed ? (
-                              <div className="relative inline-block">
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 border border-emerald-400/30 text-emerald-400 shadow-[0_0_12px_rgba(124,255,212,0.25)]">
-                                  <CheckCircle2 className="w-3.5 h-3.5" /> Confirmed
-                                </span>
-                              </div>
+                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 border border-emerald-400/30 text-emerald-400">
+                                <CheckCircle2 className="w-3.5 h-3.5" /> Confirmed
+                              </span>
                             ) : (
                               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400">
                                 <Clock className="w-3.5 h-3.5 text-slate-400" /> Pending Payment
@@ -192,9 +190,9 @@ export const DashboardPage: React.FC = () => {
                             ) : (
                               <Link
                                 to={`/payment/${req.id}`}
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-400 text-slate-950 font-semibold text-xs hover:bg-emerald-300 transition-all shadow-[0_0_10px_rgba(124,255,212,0.15)]"
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-400 text-slate-950 font-semibold text-xs hover:bg-emerald-300 transition-colors"
                               >
-                                <CreditCard className="w-3.5 h-3.5" /> Complete Payment
+                                Complete Payment
                               </Link>
                             )}
                           </td>

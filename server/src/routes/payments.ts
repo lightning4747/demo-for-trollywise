@@ -119,8 +119,8 @@ router.post('/verify', async (req: AuthRequest, res: Response): Promise<void> =>
       return;
     }
 
-    const demoReq = await db.demoRequest.findFirst({
-      where: { id: Number(requestId), userId },
+    const demoReq = await db.demoRequest.findUnique({
+      where: { id: Number(requestId) },
       include: { user: true },
     });
 
