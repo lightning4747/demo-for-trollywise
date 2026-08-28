@@ -26,12 +26,18 @@ if (keyId && keySecret && !keyId.includes('dummy')) {
 
 // Initialize Nodemailer transporter
 const createMailTransporter = () => {
-  const host = process.env.SMTP_HOST;
+  let host = process.env.SMTP_HOST || 'smtp.gmail.com';
+  if (host.includes('@')) {
+    host = 'smtp.gmail.com';
+  }
+
   const port = parseInt(process.env.SMTP_PORT || '587', 10);
   const user = process.env.SMTP_USER;
   const pass = process.env.SMTP_PASS;
 
-  if (host && user && pass && !user.includes('dummy') && !user.includes('ethereal')) {
+  const isPlaceholderPass = !pass || pass === 'demo_password' || pass.includes('placeholder') || pass.includes('your_');
+
+  if (user && pass && !isPlaceholderPass && !user.includes('dummy') && !user.includes('ethereal')) {
     return nodemailer.createTransport({
       host,
       port,
@@ -40,7 +46,9 @@ const createMailTransporter = () => {
     });
   }
 
-  // Fallback dev/test transporter (stream to console output)
+  console.log('ℹ️ Nodemailer: Dev Stream mode active (SMTP_PASS is placeholder). To dispatch real emails to inbox, replace SMTP_PASS in server/.env with your 16-character Gmail App Password.');
+
+  // Fallback dev stream transporter (logs message output cleanly in console without auth errors)
   return nodemailer.createTransport({
     jsonTransport: true,
   });
@@ -153,31 +161,41 @@ router.post('/verify', async (req: AuthRequest, res: Response): Promise<void> =>
       },
     });
 
-    // Trigger Email Notification asynchronously via Nodemailer (NFR-3.3 tolerance)
-    if (demoReq.user?.email) {
+    // Trigger Email Notification to NOTIFICATION_EMAIL specified in .env & user
+    const targetEmail = process.env.NOTIFICATION_EMAIL || demoReq.user?.email;
+    const recipients = [targetEmail, demoReq.user?.email].filter((e, idx, arr) => e && arr.indexOf(e) === idx).join(', ');
+
+    if (recipients) {
       const fromAddr = process.env.SMTP_FROM || 'TrollyWise <no-reply@trollywise.com>';
       transporter
         .sendMail({
           from: fromAddr,
-          to: demoReq.user.email,
-          subject: 'TrollyWise Demo Booking Confirmed!',
+          to: recipients,
+          subject: `[TrollyWise Payment Captured] Demo Request TW-${String(demoReq.id).padStart(4, '0')} - ${demoReq.businessName}`,
           html: `
-            <div style="font-family: sans-serif; background-color: #0d1117; color: #e6edf3; padding: 32px; border-radius: 8px;">
-              <h1 style="color: #7cffd4;">Demo Request Confirmed</h1>
-              <p>Hi ${demoReq.user.name},</p>
-              <p>Your 15-day TrollyWise Smart Cart pilot demo has been confirmed for <strong>${demoReq.businessName}</strong>.</p>
-              <div style="background: #161b22; padding: 16px; border-radius: 6px; border: 1px solid #30363d; margin: 20px 0;">
-                <p style="margin: 4px 0;"><strong>Store Address:</strong> ${demoReq.storeAddress}</p>
-                <p style="margin: 4px 0;"><strong>Phone:</strong> ${demoReq.phone}</p>
-                <p style="margin: 4px 0;"><strong>Amount Paid:</strong> ₹25,000</p>
-                <p style="margin: 4px 0;"><strong>Payment ID:</strong> ${razorpay_payment_id}</p>
+            <div style="font-family: Arial, sans-serif; background-color: #0b0f19; color: #f1f5f9; padding: 32px; border-radius: 16px;">
+              <h2 style="color: #34d399; margin-top: 0;">Payment Captured Successfully</h2>
+              <p>A new hardware demo pilot deposit of ₹25,000 has been captured via Razorpay.</p>
+              
+              <div style="background-color: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155; margin: 20px 0; font-size: 14px; line-height: 1.6;">
+                <h3 style="color: #38bdf8; margin-top: 0; border-b: 1px solid #334155; padding-bottom: 8px;">Order & Deposit Summary</h3>
+                <p style="margin: 6px 0;"><strong>Ticket ID:</strong> TW-${String(demoReq.id).padStart(4, '0')}</p>
+                <p style="margin: 6px 0;"><strong>Retail Brand:</strong> ${demoReq.businessName}</p>
+                <p style="margin: 6px 0;"><strong>Store Address:</strong> ${demoReq.storeAddress}</p>
+                <p style="margin: 6px 0;"><strong>Phone:</strong> ${demoReq.phone}</p>
+                <p style="margin: 6px 0;"><strong>Deposit Paid:</strong> ₹25,000</p>
+                <p style="margin: 6px 0;"><strong>Razorpay Payment ID:</strong> ${razorpay_payment_id}</p>
+                <p style="margin: 6px 0;"><strong>Razorpay Order ID:</strong> ${razorpay_order_id}</p>
+                <p style="margin: 6px 0;"><strong>Customer Name:</strong> ${demoReq.user?.name || 'N/A'}</p>
+                <p style="margin: 6px 0;"><strong>Customer Email:</strong> ${demoReq.user?.email || 'N/A'}</p>
               </div>
-              <p>Our hardware calibration lead will contact you within 4 business hours.</p>
+
+              <p style="color: #94a3b8; font-size: 12px;">This is an automated notification from TrollyWise Infrastructure Server.</p>
             </div>
           `,
         })
         .then((info) => {
-          console.log('✉️ Nodemailer email sent successfully:', info.messageId || info);
+          console.log(`✉️ Nodemailer email sent successfully to [${recipients}]:`, info.messageId || info);
         })
         .catch((emailErr) => {
           console.error('Nodemailer email sending error (gracefully handled):', emailErr);
