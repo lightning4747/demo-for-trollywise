@@ -168,12 +168,12 @@ export const DashboardPage: React.FC = () => {
                           {/* Status Badge */}
                           <td className="py-4 px-6">
                             {isConfirmed ? (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/15 border border-emerald-400/30 text-emerald-400">
-                                <CheckCircle2 className="w-3.5 h-3.5" /> Confirmed
+                              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-emerald-500/15 border border-emerald-400/40 text-emerald-400 font-mono shadow-sm">
+                                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> Captured
                               </span>
                             ) : (
-                              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400">
-                                <Clock className="w-3.5 h-3.5 text-slate-400" /> Pending Payment
+                              <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-medium bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono">
+                                <Clock className="w-3.5 h-3.5 text-amber-400" /> Pending Payment
                               </span>
                             )}
                           </td>

@@ -169,7 +169,7 @@ export const PaymentPage: React.FC = () => {
               </div>
 
               <span className="text-xs font-mono px-2.5 py-1 rounded bg-slate-900 border border-slate-800 text-slate-400">
-                TW-{String(request?.id).padStart(4, '0')}
+                TrollyWise-{String(request?.id).padStart(4, '0')}
               </span>
             </div>
 
