@@ -34,6 +34,14 @@ router.post('/', async (req: AuthRequest, res: Response): Promise<void> => {
       return;
     }
 
+    // Verify user exists in database to prevent foreign key errors if DB was reset
+    const userExists = await db.user.findUnique({ where: { id: userId } });
+    if (!userExists) {
+      res.clearCookie('token');
+      res.status(401).json({ error: 'User account not found. Please log in or sign up again.' });
+      return;
+    }
+
     const newRequest = await db.demoRequest.create({
       data: {
         userId,
