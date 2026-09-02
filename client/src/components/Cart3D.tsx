@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, ContactShadows, OrbitControls, useTexture } from '@react-three/drei';
+import { Float, ContactShadows, OrbitControls } from '@react-three/drei';
 import * as THREE from 'three';
 
 // -- Camera Keyframes ----------------------------------------------------------
@@ -77,48 +77,44 @@ function classifyMesh(_name: string, index: number) {
   return 'caster_body';
 }
 
-function SideLogoBadges({ matDetail }: { matDetail: THREE.Material }) {
-  const logoTexture = useTexture('/assets/logo.jpeg');
+function LeftSidePngLogo() {
+  const [logoTexture, setLogoTexture] = useState<THREE.Texture | null>(null);
+
+  useEffect(() => {
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      '/assets/logo-removebg-preview.png',
+      (tex) => {
+        tex.colorSpace = THREE.SRGBColorSpace;
+        setLogoTexture(tex);
+      },
+      undefined,
+      (err) => {
+        console.warn('Fallback loading logo.jpeg:', err);
+        loader.load('/assets/logo.jpeg', (tex2) => {
+          tex2.colorSpace = THREE.SRGBColorSpace;
+          setLogoTexture(tex2);
+        });
+      }
+    );
+  }, []);
+
+  if (!logoTexture) return null;
 
   return (
-    <group name="side_logos">
-      {/* Right Outer Side Wall Logo Badge */}
-      {/* <group position={[0.54, 0.22, -0.05]} rotation={[0, Math.PI / 2, 0]}>
-        <mesh position={[0, 0, -0.004]}>
-          <boxGeometry args={[0.36, 0.18, 0.008]} />
-          <primitive object={matDetail} attach="material" />
-        </mesh>
-        <mesh position={[0, 0, 0.002]}>
-          <planeGeometry args={[0.34, 0.16]} />
-          <meshStandardMaterial map={logoTexture} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
-        </mesh>
-      </group> */}
-
-      {/* Left Outer Side Wall Logo Badge */}
-      <group position={[-0.54, 0.22, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
-        <mesh position={[0, 0, -0.004]}>
-          <boxGeometry args={[0.36, 0.18, 0.008]} />
-          <primitive object={matDetail} attach="material" />
-        </mesh>
-        <mesh position={[0, 0, 0.002]}>
-          <planeGeometry args={[0.34, 0.16]} />
-          <meshStandardMaterial map={logoTexture} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
-        </mesh>
-      </group>
-
-      {/* Front Display Screen Brand Badge */}
-      {/* <group position={[0.0, 0.38, 0.42]} rotation={[-0.2, 0, 0]}>
-        <mesh position={[0, 0, -0.004]}>
-          <boxGeometry args={[0.26, 0.12, 0.008]} />
-          <primitive object={matDetail} attach="material" />
-        </mesh>
-        <mesh position={[0, 0, 0.002]}>
-          <planeGeometry args={[0.24, 0.10]} />
-          <meshStandardMaterial map={logoTexture} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
-        </mesh>
-      </group> */}
+    <group name="left_side_png_logo" position={[-0.51, 0.20, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
+      <mesh position={[0, 0, 0.002]}>
+        <planeGeometry args={[0.42, 0.22]} />
+        <meshStandardMaterial
+          map={logoTexture}
+          transparent={true}
+          alphaTest={0.05}
+          roughness={0.2}
+          metalness={0.1}
+          side={THREE.DoubleSide}
+        />
+      </mesh>
     </group>
-    
   );
 }
 
@@ -275,10 +271,8 @@ export function RealStepCartModel({
         })}
       </group>
 
-      {/* TrollyWise Outer Side & Front Logo Badges */}
-      <React.Suspense fallback={null}>
-        <SideLogoBadges matDetail={mat.detail} />
-      </React.Suspense>
+      {/* TrollyWise Left Side Logo */}
+      <LeftSidePngLogo />
 
       {showDimensions && (
         <group name="dim_layer">
