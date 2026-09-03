@@ -79,49 +79,53 @@ function classifyMesh(_name: string, index: number) {
 
 function SideLogoBadges({ matDetail }: { matDetail: THREE.Material }) {
   const logoTexture = useTexture('/assets/logo.jpeg');
+  const pngTexture = useTexture('/assets/logo-removebg-preview.png');
+
+  const badgeHeight = 0.35;
+  const badgeWidth = 0.35;
+  const logoSize = 0.24; // <- only number you touch to resize
+  const frameSize = logoSize + 0.02;
 
   return (
     <group name="side_logos">
-      {/* Right Outer Side Wall Logo Badge */}
-      {/* <group position={[0.54, 0.22, -0.05]} rotation={[0, Math.PI / 2, 0]}>
-        <mesh position={[0, 0, -0.004]}>
-          <boxGeometry args={[0.36, 0.18, 0.008]} />
-          <primitive object={matDetail} attach="material" />
-        </mesh>
-        <mesh position={[0, 0, 0.002]}>
-          <planeGeometry args={[0.34, 0.16]} />
-          <meshStandardMaterial map={logoTexture} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
-        </mesh>
-      </group> */}
 
-      {/* Left Outer Side Wall Logo Badge */}
-      <group position={[-0.54, 0.22, -0.05]} rotation={[0, -Math.PI / 2, 0]}>
+      {/* Back Side Wall Logo Badge */}
+      <group position={[-0.56, 0.22, -0.0]} rotation={[0, -Math.PI / 2, 0]}>
         <mesh position={[0, 0, -0.004]}>
-          <boxGeometry args={[0.36, 0.18, 0.008]} />
+          <boxGeometry args={[badgeWidth + 0.02, badgeHeight + 0.02, 0.008]} />
           <primitive object={matDetail} attach="material" />
         </mesh>
         <mesh position={[0, 0, 0.002]}>
-          <planeGeometry args={[0.34, 0.16]} />
+          <planeGeometry args={[badgeWidth, badgeHeight]} />
           <meshStandardMaterial map={logoTexture} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
         </mesh>
       </group>
 
-      {/* Front Display Screen Brand Badge */}
-      {/* <group position={[0.0, 0.38, 0.42]} rotation={[-0.2, 0, 0]}>
-        <mesh position={[0, 0, -0.004]}>
-          <boxGeometry args={[0.26, 0.12, 0.008]} />
-          <primitive object={matDetail} attach="material" />
-        </mesh>
-        <mesh position={[0, 0, 0.002]}>
-          <planeGeometry args={[0.24, 0.10]} />
-          <meshStandardMaterial map={logoTexture} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
-        </mesh>
-      </group> */}
+{/* Left Side Wall Logo Badge */}
+<group position={[0, 0.3, -0.4]} rotation={[3.1, Math.PI / -100, 15.6]}>
+  <mesh position={[0, 0, -0.004]}>
+    <boxGeometry args={[frameSize, frameSize, 0.008]} />
+    <primitive object={matDetail} attach="material" />
+  </mesh>
+  <mesh position={[0, 0, 0.002]}>
+    <planeGeometry args={[logoSize, logoSize]} />
+    <meshStandardMaterial map={pngTexture} transparent={true} alphaTest={0.05} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
+  </mesh>
+</group>
+{/* Right Side Wall Logo Badge */}
+  <group position={[0.2, 0.26, 0.38]} rotation={[0, Math.PI / 100, 0]}>
+    <mesh position={[0, 0, -0.004]}>
+      <boxGeometry args={[frameSize, frameSize, 0.008]} />
+      <primitive object={matDetail} attach="material" />
+    </mesh>
+    <mesh position={[0, 0, 0.002]}>
+      <planeGeometry args={[logoSize, logoSize]} />
+      <meshStandardMaterial map={pngTexture} transparent={true} alphaTest={0.05} roughness={0.2} metalness={0.1} side={THREE.DoubleSide} />
+    </mesh>
+  </group>
     </group>
-    
   );
 }
-
 interface RealStepCartModelProps {
   activeComponent?: string | null;
   rotationY?: number;
